@@ -6,6 +6,8 @@
     canvas.width = 400;
     canvas.height = 400;
 
+    var time = 0;
+
     ctx.fillStyle = "rgb(200,0,0)";
     // 正方形
     // ctx.beginPath();
@@ -22,6 +24,11 @@
     // ctx.stroke();
     // 使用方法去包裝影格，以方便去更新
     function draw() {
+        time++;
+        ctx.clearRect(0,0,400,400); // 清除影格內容
+        // ctx.fillStyle="rgba(255,255,255,0.2)"; // 用覆蓋白色清除影格內容 白色 透明度越低，越會有殘影感
+        // ctx.fillRect(0,0,400,400);
+
         ctx.beginPath();
         for (var i = 0; i < 10; i++) {
             let pos = i * 50;
@@ -86,29 +93,42 @@
         // 旗幟
         ctx.beginPath();
             ctx.moveTo(175, 150);
-            ctx.lineTo(175, 100);
-            ctx.lineTo(200, 110);
-            ctx.lineTo(175, 120);
+            ctx.lineTo(175, 100 - (mouse.y/5));
+            ctx.lineTo(200, 110 - (time%10) - (mouse.y/5) );
+            ctx.lineTo(175, 120 - (mouse.y/5));
         ctx.closePath();
-        ctx.fillStyle = "red";
+        // ctx.fillStyle = "red";
+        ctx.fillStyle ="hsl(" + mouse.x + ",50%,50%)";
         ctx.fill();
         ctx.stroke();
 
         // 車車
         ctx.fillStyle="white";
+        let carx = time % 440 - 40 ; // time % 400 會直接蹦出車車
         // 先畫線再填色，會造成框線變細，因為線會被填色壓到，所以視覺看起來就會比較細。
         // 所以請填色再畫框線
-        ctx.fillRect(300,325,40,25);
-        ctx.strokeRect(300,325,40,25);
+        ctx.fillRect(carx,325,40,25);
+        ctx.strokeRect(carx,325,40,25);
         ctx.beginPath();
-        ctx.arc(300+10,350,5,0,Math.PI*2);
-        ctx.arc(300+30,350,5,0,Math.PI*2);
+        ctx.arc(carx+10,350,5,0,Math.PI*2);
+        ctx.arc(carx+30,350,5,0,Math.PI*2);
         
         ctx.fillStyle = "black";
         ctx.fill();
         ctx.stroke();
 
+        ctx.beginPath();
+        ctx.arc(mouse.x ,mouse.y , 10 , 0 ,Math.PI*2);
+        ctx.fillStyle = "purple";
+        ctx.fill();
     }
 
-    draw();
+    // 每個幾毫秒，執行方法，不用加上()
+    setInterval(draw,20)
+    // 添加滑鼠事件,抓取滑鼠位置
+    var mouse = {x:0 , y:0}; 
+    canvas.addEventListener("mousemove",function(e) {
+        mouse.x = e.offsetX;
+        mouse.y = e.offsetY;
+    })
 })()
